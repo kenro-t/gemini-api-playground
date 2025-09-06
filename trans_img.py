@@ -7,20 +7,24 @@ from datetime import datetime
 client = genai.Client()
 
 prompt = (
-    "Create a picture of a nano banana dish in a fancy restaurant with a Gemini theme"
+    "hello world, a cat playing with a ball of yarn in a cozy living room, "
 )
+
+image = Image.open("target_image.png")
+image2 = Image.open("1920x1080-white.png")
 
 response = client.models.generate_content(
     model="gemini-2.5-flash-image-preview",
-    contents=[prompt],
+    # contents=[prompt, image],
+    contents=[prompt, image, image2],
 )
+
+print(response)
 
 for part in response.candidates[0].content.parts:
     if part.text is not None:
         print(part.text)
     elif part.inline_data is not None:
         image = Image.open(BytesIO(part.inline_data.data))
-        # image.save("generated_image.png")
-        
         now = datetime.now()
         image.save(f"generated_image_{now.strftime('%Y%m%d_%H%M%S')}.png")
